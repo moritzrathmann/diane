@@ -8,6 +8,8 @@ from faster_whisper import WhisperModel
 from flask import Flask, jsonify, request
 from store_supabase import SupabaseStore
 from diane_llm import diane_decide
+from threading import Thread
+
 
 app = Flask(__name__)
 store = SupabaseStore()
@@ -218,168 +220,12 @@ def bulk():
 
 @app.route("/api/telegram", methods=["POST"])
 def telegram_webhook():
-    """Handle incoming Telegram messages and callback queries"""
     data = request.get_json(force=True, silent=True) or {}
-    
-    # Handle callback queries (button presses)
-    if data.get("callback_query"):
-        return handle_callback_query(data["callback_query"])
-    
-    # Handle messages
-    msg = data.get("message") or data.get("edited_message") or {}
-    if not msg:
-        return jsonify({"ok": True})
-    
-    chat_id = msg.get("chat", {}).get("id")
-    if not chat_id:
-        return jsonify({"ok": True})
-    
-    try:
-        # TEXT MESSAGE
-        if msg.get("text"):
-            text = msg["text"]
-            decision = diane_decide(text)
-            
-            # Store pending confirmation
-            confirmation_id = f"{chat_id}_{msg['message_id']}"
-            pending_confirmations[confirmation_id] = {
-                "decision": decision.to_dict(),
-                "source": "telegram_text",
-                "chat_id": chat_id
-            }
-            
-            # Send confirmation request
-            confirmation_msg = format_confirmation_message(decision, "text message")
-            send_message(
-                chat_id,
-                confirmation_msg,
-                reply_markup=create_confirmation_keyboard(confirmation_id)
-            )
-        
-        # VOICE MESSAGE
-        elif msg.get("voice") and msg["voice"].get("file_id"):
-            # Download and transcribe
-            audio = download_telegram_file(msg["voice"]["file_id"])
-            text = transcribe_bytes(audio)
-            
-            if not text:
-                send_message(chat_id, "⚠️ Could not transcribe voice message. Please try again.")
-                return jsonify({"ok": True})
-            
-            decision = diane_decide(text)
-            
-            # Store pending confirmation
-            confirmation_id = f"{chat_id}_{msg['message_id']}"
-            pending_confirmations[confirmation_id] = {
-                "decision": decision.to_dict(),
-                "source": "telegram_voice",
-                "chat_id": chat_id
-            }
-            
-            # Send confirmation request
-            confirmation_msg = format_confirmation_message(decision, "voice note")
-            send_message(
-                chat_id,
-                confirmation_msg,
-                reply_markup=create_confirmation_keyboard(confirmation_id)
-            )
-        
-        # DOCUMENT (PDF, DOCX, etc.)
-        elif msg.get("document"):
-            doc = msg["document"]
-            file_id = doc.get("file_id")
-            file_name = doc.get("file_name", "document")
-            mime_type = doc.get("mime_type", "")
-            
-            if not file_id:
-                return jsonify({"ok": True})
-            
-            # Download file
-            file_bytes = download_telegram_file(file_id)
-            
-            # Create content with file info
-            caption = msg.get("caption", "")
-            content = f"📎 File: {file_name}\n"
-            if caption:
-                content += f"\n{caption}"
-            
-            # Store file as base64 (or upload to storage in production)
-            file_b64 = base64.b64encode(file_bytes).decode()
-            content += f"\n\n[File data: {len(file_bytes)} bytes, {mime_type}]"
-            
-            decision = diane_decide(caption or f"Document: {file_name}")
-            decision.content = content
-            
-            # Store pending confirmation
-            confirmation_id = f"{chat_id}_{msg['message_id']}"
-            pending_confirmations[confirmation_id] = {
-                "decision": decision.to_dict(),
-                "source": "telegram_document",
-                "chat_id": chat_id,
-                "file_name": file_name,
-                "file_data": file_b64[:1000]  # Store preview
-            }
-            
-            # Send confirmation
-            confirmation_msg = format_confirmation_message(decision, "document", has_file=True)
-            send_message(
-                chat_id,
-                confirmation_msg,
-                reply_markup=create_confirmation_keyboard(confirmation_id)
-            )
-        
-        # PHOTO
-        elif msg.get("photo"):
-            # Get largest photo
-            photos = msg["photo"]
-            largest = max(photos, key=lambda p: p.get("file_size", 0))
-            file_id = largest.get("file_id")
-            
-            if not file_id:
-                return jsonify({"ok": True})
-            
-            # Download image
-            img_bytes = download_telegram_file(file_id)
-            
-            # Create content with image info
-            caption = msg.get("caption", "")
-            content = f"🖼️ Image attached\n"
-            if caption:
-                content += f"\n{caption}"
-            
-            # Store image as base64
-            img_b64 = base64.b64encode(img_bytes).decode()
-            content += f"\n\n[Image data: {len(img_bytes)} bytes]"
-            
-            decision = diane_decide(caption or "Image")
-            decision.content = content
-            
-            # Store pending confirmation
-            confirmation_id = f"{chat_id}_{msg['message_id']}"
-            pending_confirmations[confirmation_id] = {
-                "decision": decision.to_dict(),
-                "source": "telegram_image",
-                "chat_id": chat_id,
-                "image_data": img_b64[:1000]  # Store preview
-            }
-            
-            # Send confirmation
-            confirmation_msg = format_confirmation_message(decision, "image", has_file=True)
-            send_message(
-                chat_id,
-                confirmation_msg,
-                reply_markup=create_confirmation_keyboard(confirmation_id)
-            )
-        
-        else:
-            send_message(chat_id, "ℹ️ Supported: text, voice notes, documents, and images.")
-    
-    except Exception as e:
-        print(f"Error processing message: {e}")
-        if chat_id:
-            send_message(chat_id, f"❌ Error: {str(e)}")
-    
+
+    # respond IMMEDIATELY so Telegram + Gunicorn are happy
+    Thread(target=process_telegram_update, args=(data,)).start()
     return jsonify({"ok": True})
+
 
 def handle_callback_query(callback):
     """Handle button presses from inline keyboards"""
@@ -508,6 +354,63 @@ def set_webhook():
     
     result = tg_api("setWebhook", {"url": webhook_url})
     return jsonify(result)
+
+def process_telegram_update(data):
+    try:
+        # CALLBACKS
+        if data.get("callback_query"):
+            handle_callback_query(data["callback_query"])
+            return
+
+        msg = data.get("message") or data.get("edited_message") or {}
+        if not msg:
+            return
+
+        chat_id = msg.get("chat", {}).get("id")
+        if not chat_id:
+            return
+
+        # TEXT
+        if msg.get("text"):
+            text = msg["text"]
+            decision = diane_decide(text)
+
+            confirmation_id = f"{chat_id}_{msg['message_id']}"
+            pending_confirmations[confirmation_id] = {
+                "decision": decision.to_dict(),
+                "source": "telegram_text",
+                "chat_id": chat_id
+            }
+
+            send_message(
+                chat_id,
+                format_confirmation_message(decision, "text message"),
+                reply_markup=create_confirmation_keyboard(confirmation_id)
+            )
+
+        # VOICE (this is what was killing your worker)
+        elif msg.get("voice"):
+            audio = download_telegram_file(msg["voice"]["file_id"])
+            text = transcribe_bytes(audio)
+
+            decision = diane_decide(text)
+            confirmation_id = f"{chat_id}_{msg['message_id']}"
+
+            pending_confirmations[confirmation_id] = {
+                "decision": decision.to_dict(),
+                "source": "telegram_voice",
+                "chat_id": chat_id
+            }
+
+            send_message(
+                chat_id,
+                format_confirmation_message(decision, "voice note"),
+                reply_markup=create_confirmation_keyboard(confirmation_id)
+            )
+
+    except Exception as e:
+        print("TELEGRAM BACKGROUND ERROR:", e)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
