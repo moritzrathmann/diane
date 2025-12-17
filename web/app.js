@@ -162,6 +162,30 @@ async function bulkAction(ids, action) {
   applyFiltersAndRender(true);
 }
 
+async function apiDeleteItem(id) {
+  // Try real delete first (if backend supports it)
+  try {
+    const res = await fetch(`${API_BASE}/api/items/${id}`, { method: "DELETE" });
+    if (res.ok) return { deleted: true };
+
+    // If backend returns JSON error, try to read it (optional)
+    let data = {};
+    try { data = await res.json(); } catch {}
+    throw new Error(data.error || "DELETE not supported");
+  } catch (e) {
+    // Fallback: soft delete = archive + reviewed
+    const item = await apiPatchItem(id, { archived: true, reviewed: true });
+    return { deleted: false, item };
+  }
+}
+
+async function deleteItem(id) {
+  await apiDeleteItem(id);
+  state.items = await fetchItems();
+  applyFiltersAndRender(true);
+}
+
+
 // ---------- UI ----------
 function deriveTitle(kind, content) {
   const line = (content || "").trim().split("\n")[0]?.slice(0, 90) || "Untitled";
@@ -392,14 +416,26 @@ function renderCard(it) {
     setTimeout(() => (btnCopy.textContent = "Copy"), 900);
   };
 
+  const btnDelete = document.createElement("button");
+  btnDelete.className = "btn btn-small btn-ghost";
+  btnDelete.textContent = "Delete";
+  btnDelete.onclick = async (e) => {
+    e.stopPropagation();
+
+    const ok = confirm("Wirklich löschen? (Fallback: archived+reviewed)");
+    if (!ok) return;
+
+    await deleteItem(it.id);
+  };
+
   actions.appendChild(btnReview);
   actions.appendChild(btnArchive);
   actions.appendChild(btnCopy);
+  actions.appendChild(btnDelete);
 
-  [btnReview, btnArchive, btnCopy].forEach(btn => {
-    btn.addEventListener("mousedown", (e) => {
-      e.stopPropagation();
-    });
+  // verhindern, dass drag/click komisch wird
+  [btnReview, btnArchive, btnCopy, btnDelete].forEach(btn => {
+    btn.addEventListener("mousedown", (e) => e.stopPropagation());
   });
 
   const badges = document.createElement("div");
