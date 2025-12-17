@@ -163,20 +163,9 @@ async function bulkAction(ids, action) {
 }
 
 async function apiDeleteItem(id) {
-  // Try real delete first (if backend supports it)
-  try {
-    const res = await fetch(`${API_BASE}/api/items/${id}`, { method: "DELETE" });
-    if (res.ok) return { deleted: true };
-
-    // If backend returns JSON error, try to read it (optional)
-    let data = {};
-    try { data = await res.json(); } catch {}
-    throw new Error(data.error || "DELETE not supported");
-  } catch (e) {
-    // Fallback: soft delete = archive + reviewed
-    const item = await apiPatchItem(id, { archived: true, reviewed: true });
-    return { deleted: false, item };
-  }
+  // Backend erlaubt DELETE nicht -> Soft delete via PATCH
+  const item = await apiPatchItem(id, { archived: true, reviewed: true });
+  return { deleted: false, item };
 }
 
 async function deleteItem(id) {
