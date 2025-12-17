@@ -496,6 +496,18 @@ def handle_callback_query(callback):
     
     return jsonify({"ok": True})
 
+# Füge diese Route am Ende von app.py hinzu:
+
+@app.route("/set-webhook", methods=["GET"])
+def set_webhook():
+    """Set Telegram webhook - call this once after deploy"""
+    webhook_url = request.args.get("url")  # deine Render URL
+    
+    if not webhook_url:
+        return jsonify({"error": "Pass ?url=https://your-app.onrender.com/api/telegram"}), 400
+    
+    result = tg_api("setWebhook", {"url": webhook_url})
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
