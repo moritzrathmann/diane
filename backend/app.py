@@ -21,7 +21,7 @@ pending_confirmations = {}
 def get_whisper():
     global _whisper
     if _whisper is None:
-        _whisper = WhisperModel("small", device="cpu", compute_type="int8")
+        _whisper = WhisperModel("tiny", device="cpu", compute_type="int8")
     return _whisper
 
 def tg_api(method, params=None):
