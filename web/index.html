@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DIANE — Decision Cockpit</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">DIANE</div>
+      <div class="subtitle">Decision Cockpit · Sticky Inbox</div>
+    </div>
+
+    <div class="top-actions">
+      <button id="btnRefresh" class="btn">Refresh</button>
+      <button id="btnDemoData" class="btn btn-ghost" title="Lädt lokale Demo-Daten">Demo Data</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Left rail -->
+    <aside class="rail">
+      <div class="panel">
+        <div class="panel-title">Search</div>
+        <input id="searchInput" class="input" placeholder="Keywords… (z.B. gitlab voice demo)" autocomplete="off" />
+        <div class="hint">
+          Tipp: nutze eigene Keywords wie <code>diane gitlab</code>, <code>#demo</code>, <code>crm</code>.
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Filters</div>
+        <div id="kindFilters" class="chips"></div>
+
+        <div class="divider"></div>
+
+        <label class="row">
+          <input id="toggleArchived" type="checkbox" />
+          <span>Archived anzeigen</span>
+        </label>
+        <label class="row">
+          <input id="toggleReviewed" type="checkbox" checked />
+          <span>Reviewed anzeigen</span>
+        </label>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Bulk</div>
+        <div class="bulk">
+          <button id="btnBulkReview" class="btn btn-small">Mark Reviewed</button>
+          <button id="btnBulkArchive" class="btn btn-small btn-ghost">Archive</button>
+        </div>
+        <div class="hint">
+          Keyboard: <code>j/k</code> nav · <code>r</code> reviewed · <code>a</code> archive · <code>/</code> focus search
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <section class="content">
+      <div class="content-head">
+        <div>
+          <div class="h1">Inbox</div>
+          <div id="stats" class="stats">—</div>
+        </div>
+
+        <div class="view-actions">
+          <button id="btnCreateLocal" class="btn btn-ghost">+ Quick Note</button>
+        </div>
+      </div>
+
+      <div id="board" class="board"></div>
+
+      <div id="emptyState" class="empty hidden">
+        <div class="empty-title">Keine Items gefunden.</div>
+        <div class="empty-sub">Versuch andere Keywords oder entferne Filter.</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Quick note modal -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Quick Note</div>
+        <button id="modalClose" class="btn btn-small btn-ghost">Close</button>
+      </div>
+      <textarea id="modalText" class="textarea" placeholder="Schreib rein wie du es an DIANE senden würdest…"></textarea>
+      <div class="modal-actions">
+        <select id="modalKind" class="select">
+          <option value="NOTE">NOTE</option>
+          <option value="DEV_TICKET">DEV_TICKET</option>
+          <option value="BUSINESS_TODO">BUSINESS_TODO</option>
+          <option value="DEMO_PREP">DEMO_PREP</option>
+          <option value="CRM_ACTION">CRM_ACTION</option>
+        </select>
+        <button id="modalSave" class="btn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

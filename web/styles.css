@@ -1,0 +1,614 @@
+:root{
+  --bg:#070A12;
+  --panel:#0C1020;
+  --card:#0E1430;
+  --card2:#0B122A;
+  --text:#E7ECFF;
+  --muted:#9AA6D6;
+  --border:rgba(255,255,255,.08);
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --radius:18px;
+  --radius2:14px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background: radial-gradient(1200px 800px at 20% 0%, #121a3a 0%, var(--bg) 55%, #04060d 100%);
+  color:var(--text);
+}
+
+.topbar{
+  position:sticky; top:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  backdrop-filter: blur(10px);
+  background: rgba(7,10,18,.55);
+  z-index:10;
+}
+
+.brand{display:flex; align-items:baseline; gap:12px}
+.logo{
+  font-weight:800; letter-spacing:.08em;
+  padding:6px 10px; border:1px solid var(--border);
+  border-radius:999px;
+  background: rgba(255,255,255,.03);
+}
+.subtitle{color:var(--muted); font-size:12px}
+
+.top-actions{display:flex; gap:10px}
+
+.layout{
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap:16px;
+  padding:16px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.rail{display:flex; flex-direction:column; gap:16px}
+.panel{
+  background: rgba(12,16,32,.55);
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  padding:14px;
+  box-shadow: var(--shadow);
+}
+.panel-title{font-weight:700; margin-bottom:10px; font-size:13px; color:var(--muted)}
+
+.input{
+  width:100%;
+  padding:12px 12px;
+  border-radius: 12px;
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.18);
+  color:var(--text);
+  outline:none;
+}
+.input:focus{border-color: rgba(230,236,255,.25)}
+
+.textarea{
+  width:100%;
+  min-height: 130px;
+  padding:12px;
+  border-radius: 12px;
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.18);
+  color:var(--text);
+  outline:none;
+  resize: vertical;
+}
+
+.select{
+  border-radius: 12px;
+  border:1px solid var(--border);
+  padding:10px 12px;
+  background: rgba(0,0,0,.18);
+  color:var(--text);
+}
+
+.hint{
+  margin-top:10px;
+  color: var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+.hint code{
+  color:var(--text);
+  background: rgba(255,255,255,.06);
+  padding:2px 6px;
+  border-radius: 8px;
+  border:1px solid var(--border);
+}
+
+.divider{height:1px; background: var(--border); margin:12px 0}
+.row{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; margin:8px 0}
+.bulk{display:flex; gap:10px; flex-wrap:wrap}
+
+.content{
+  display:flex; flex-direction:column; gap:14px;
+}
+
+.content-head{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  padding:8px 6px;
+}
+.h1{font-size:24px; font-weight:800; letter-spacing:.02em}
+.stats{color:var(--muted); font-size:12px; margin-top:6px}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:14px;
+}
+@media (max-width: 1100px){
+  .layout{grid-template-columns: 1fr}
+  .grid{grid-template-columns: repeat(2, minmax(0, 1fr))}
+}
+@media (max-width: 700px){
+  .grid{grid-template-columns: 1fr}
+}
+
+.card{
+  position:relative;
+  background: linear-gradient(180deg, rgba(14,20,48,.8), rgba(11,18,42,.8));
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  padding:14px;
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.card.selected{outline:2px solid rgba(231,236,255,.22)}
+.card-top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px}
+.kind{
+  font-size:11px;
+  color: var(--muted);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:5px 8px;
+  background: rgba(255,255,255,.03);
+  white-space:nowrap;
+}
+.meta{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:11px}
+.dot{width:6px; height:6px; border-radius:999px; background: rgba(231,236,255,.25)}
+
+.title{
+  font-weight:800;
+  font-size:14px;
+  margin:0 0 8px 0;
+  line-height:1.25;
+}
+.body{
+  color: rgba(231,236,255,.88);
+  font-size:13px;
+  line-height:1.4;
+  white-space: pre-wrap;
+}
+
+.card-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+.btn{
+  cursor:pointer;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.05);
+  color: var(--text);
+  padding:10px 12px;
+  border-radius: 12px;
+  font-weight:700;
+}
+.btn:hover{background: rgba(255,255,255,.08)}
+.btn-ghost{
+  background: transparent;
+}
+.btn-small{
+  padding:8px 10px;
+  font-size:12px;
+  border-radius: 10px;
+}
+
+.badge{
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+  font-size:11px;
+  color:var(--muted);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:4px 8px;
+  background: rgba(255,255,255,.03);
+}
+
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  cursor:pointer;
+  user-select:none;
+  font-size:12px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  color: var(--muted);
+}
+.chip.active{
+  background: rgba(231,236,255,.10);
+  color: var(--text);
+}
+
+.empty{
+  margin-top:40px;
+  padding:30px;
+  border:1px dashed var(--border);
+  border-radius: var(--radius);
+  color:var(--muted);
+  text-align:center;
+}
+.empty-title{font-weight:800; color:var(--text); margin-bottom:6px}
+
+.hidden{display:none !important}
+
+.modal{
+  position:fixed; inset:0;
+  background: rgba(0,0,0,.45);
+  display:flex; align-items:center; justify-content:center;
+  padding:18px;
+  z-index:100;
+}
+.modal-card{
+  width:min(720px, 100%);
+  background: rgba(12,16,32,.85);
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:14px;
+}
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.modal-title{font-weight:900; letter-spacing:.02em}
+.modal-actions{
+  display:flex; gap:10px; justify-content:flex-end; align-items:center;
+  margin-top:12px;
+}
+
+/* =========================
+   DIANE — Semantic Color Layer
+   ========================= */
+
+/* 1) Kind colors (scan fast) */
+:root{
+  --k-dev: #7c3aed;      /* violet */
+  --k-biz: #f97316;      /* orange */
+  --k-demo:#06b6d4;      /* cyan */
+  --k-crm: #22c55e;      /* green */
+  --k-note:#eab308;      /* yellow */
+
+  --s-unreviewed:#60a5fa; /* blue */
+  --s-reviewed:#34d399;   /* mint */
+  --s-archived:#94a3b8;   /* slate */
+}
+
+/* 2) Card top tag (kind pill) gets a color bar */
+.kind{
+  position: relative;
+  padding-left: 12px;
+}
+
+.kind::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:8px;
+  height:18px;
+  border-radius:999px;
+  background: rgba(255,255,255,0.18);
+  box-shadow: 0 0 14px rgba(255,255,255,0.12);
+}
+
+/* Map kind -> bar color */
+.card[data-kind="DEV_TICKET"] .kind::before{ background: var(--k-dev); box-shadow: 0 0 16px color-mix(in srgb, var(--k-dev) 60%, transparent); }
+.card[data-kind="BUSINESS_TODO"] .kind::before{ background: var(--k-biz); box-shadow: 0 0 16px color-mix(in srgb, var(--k-biz) 60%, transparent); }
+.card[data-kind="DEMO_PREP"] .kind::before{ background: var(--k-demo); box-shadow: 0 0 16px color-mix(in srgb, var(--k-demo) 60%, transparent); }
+.card[data-kind="CRM_ACTION"] .kind::before{ background: var(--k-crm); box-shadow: 0 0 16px color-mix(in srgb, var(--k-crm) 60%, transparent); }
+.card[data-kind="NOTE"] .kind::before{ background: var(--k-note); box-shadow: 0 0 16px color-mix(in srgb, var(--k-note) 55%, transparent); }
+
+/* 3) Card border tint by kind (subtle) */
+.card{
+  border-color: rgba(255,255,255,0.08);
+}
+.card[data-kind="DEV_TICKET"]{ border-color: color-mix(in srgb, var(--k-dev) 35%, rgba(255,255,255,0.08)); }
+.card[data-kind="BUSINESS_TODO"]{ border-color: color-mix(in srgb, var(--k-biz) 35%, rgba(255,255,255,0.08)); }
+.card[data-kind="DEMO_PREP"]{ border-color: color-mix(in srgb, var(--k-demo) 35%, rgba(255,255,255,0.08)); }
+.card[data-kind="CRM_ACTION"]{ border-color: color-mix(in srgb, var(--k-crm) 35%, rgba(255,255,255,0.08)); }
+.card[data-kind="NOTE"]{ border-color: color-mix(in srgb, var(--k-note) 30%, rgba(255,255,255,0.08)); }
+
+/* 4) Badges get state colors */
+.badge[data-state="unreviewed"]{ border-color: color-mix(in srgb, var(--s-unreviewed) 35%, rgba(255,255,255,0.10)); }
+.badge[data-state="unreviewed"] .dot{ background: var(--s-unreviewed); }
+
+.badge[data-state="reviewed"]{ border-color: color-mix(in srgb, var(--s-reviewed) 35%, rgba(255,255,255,0.10)); }
+.badge[data-state="reviewed"] .dot{ background: var(--s-reviewed); }
+
+.badge[data-state="archived"]{ border-color: color-mix(in srgb, var(--s-archived) 35%, rgba(255,255,255,0.10)); }
+.badge[data-state="archived"] .dot{ background: var(--s-archived); }
+
+/* 5) Buttons: give archive/review a hint of meaning (still enterprise) */
+.btn.btn-small{
+  border-color: rgba(255,255,255,0.14);
+}
+.btn.btn-small:hover{
+  border-color: rgba(255,255,255,0.22);
+}
+
+.btn-reviewed{
+  border-color: color-mix(in srgb, var(--s-reviewed) 45%, rgba(255,255,255,0.14));
+}
+.btn-archived{
+  border-color: color-mix(in srgb, var(--s-archived) 45%, rgba(255,255,255,0.14));
+}
+
+/* =========================
+   KIND COLOR SYSTEM (tinted cards)
+   ========================= */
+
+/* base vars (fallback) */
+:root{
+  --k-accent: 120 120 255;      /* rgb (space-blue fallback) */
+  --k-bg1: 18 24 44;            /* card tint */
+  --k-bg2: 10 14 28;            /* deeper tint */
+}
+
+/* per-kind palettes */
+:root{
+  --DEV_TICKET-accent: 255 77 77;
+  --DEV_TICKET-bg1:    44 18 22;
+  --DEV_TICKET-bg2:    22 12 16;
+
+  --BUSINESS_TODO-accent: 255 163 77;
+  --BUSINESS_TODO-bg1:    44 28 18;
+  --BUSINESS_TODO-bg2:    24 16 12;
+
+  --DEMO_PREP-accent: 140 105 255;
+  --DEMO_PREP-bg1:    30 20 44;
+  --DEMO_PREP-bg2:    16 12 26;
+
+  --CRM_ACTION-accent: 77 220 145;
+  --CRM_ACTION-bg1:    18 44 30;
+  --CRM_ACTION-bg2:    12 24 18;
+
+  --NOTE-accent: 255 217 77;
+  --NOTE-bg1:    44 40 18;
+  --NOTE-bg2:    24 22 12;
+}
+
+/* apply tint to the whole card */
+.card{
+  position: relative;
+  background:
+    radial-gradient(1200px 500px at 10% -20%,
+      rgba(var(--k-accent), .18),
+      transparent 55%),
+    linear-gradient(180deg,
+      rgba(var(--k-bg1), .92),
+      rgba(var(--k-bg2), .92));
+  border: 1px solid rgba(var(--k-accent), .22);
+  box-shadow:
+    0 18px 48px rgba(0,0,0,.45),
+    0 0 0 1px rgba(255,255,255,.03) inset;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+/* accent strip on the left (stronger cue) */
+.card::before{
+  content:"";
+  position:absolute;
+  left: 10px;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 999px;
+  background: rgba(var(--k-accent), .85);
+  box-shadow: 0 0 24px rgba(var(--k-accent), .25);
+  opacity: .9;
+}
+
+/* hover / selected */
+.card:hover{
+  transform: translateY(-2px);
+  border-color: rgba(var(--k-accent), .45);
+  box-shadow:
+    0 22px 60px rgba(0,0,0,.55),
+    0 0 0 1px rgba(255,255,255,.05) inset;
+}
+
+.card.selected{
+  border-color: rgba(var(--k-accent), .65);
+  box-shadow:
+    0 26px 70px rgba(0,0,0,.6),
+    0 0 0 1px rgba(var(--k-accent), .18) inset;
+}
+
+/* make kind pill reflect accent too */
+.kind{
+  border: 1px solid rgba(var(--k-accent), .28);
+  background: rgba(var(--k-accent), .10);
+  color: rgba(var(--k-accent), .95);
+}
+
+/* buttons slightly adapt per card */
+.card .btn{
+  border: 1px solid rgba(var(--k-accent), .22);
+}
+.card .btn:hover{
+  border-color: rgba(var(--k-accent), .5);
+  box-shadow: 0 0 0 3px rgba(var(--k-accent), .10);
+}
+
+/* badges */
+.badge{
+  border: 1px solid rgba(var(--k-accent), .18);
+  background: rgba(var(--k-accent), .08);
+}
+
+/* helper classes set by JS: .k-DEV_TICKET etc */
+.k-DEV_TICKET{ --k-accent: var(--DEV_TICKET-accent); --k-bg1: var(--DEV_TICKET-bg1); --k-bg2: var(--DEV_TICKET-bg2); }
+.k-BUSINESS_TODO{ --k-accent: var(--BUSINESS_TODO-accent); --k-bg1: var(--BUSINESS_TODO-bg1); --k-bg2: var(--BUSINESS_TODO-bg2); }
+.k-DEMO_PREP{ --k-accent: var(--DEMO_PREP-accent); --k-bg1: var(--DEMO_PREP-bg1); --k-bg2: var(--DEMO_PREP-bg2); }
+.k-CRM_ACTION{ --k-accent: var(--CRM_ACTION-accent); --k-bg1: var(--CRM_ACTION-bg1); --k-bg2: var(--CRM_ACTION-bg2); }
+.k-NOTE{ --k-accent: var(--NOTE-accent); --k-bg1: var(--NOTE-bg1); --k-bg2: var(--NOTE-bg2); }
+
+.board{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  overflow-x:auto;
+  padding: 4px 4px 24px 4px;
+}
+
+.column{
+  min-width: 320px;
+  max-width: 360px;
+  flex: 0 0 auto;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  padding: 12px;
+}
+
+.col-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding: 6px 6px 10px 6px;
+}
+
+.col-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.col-pill{
+  font-size:12px;
+  opacity:0.9;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+}
+
+.col-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* ========== Drag & Drop ========== */
+
+.card {
+  cursor: grab;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.card.dragging {
+  opacity: 0.45;
+  transform: scale(0.97);
+  cursor: grabbing;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* Drop target highlight */
+.col-list.drag-over {
+  outline: 2px dashed rgba(255,255,255,0.25);
+  outline-offset: 6px;
+  background: rgba(255,255,255,0.03);
+}
+
+/* ========== Drag & Drop ========== */
+
+.card {
+  cursor: grab;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.card.dragging {
+  opacity: 0.45;
+  transform: scale(0.97);
+  cursor: grabbing;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* Drop target highlight */
+.col-list.drag-over {
+  outline: 2px dashed rgba(255,255,255,0.25);
+  outline-offset: 6px;
+  background: rgba(255,255,255,0.03);
+}
+
+/* ========== Card color by kind ========== */
+
+.card {
+  border-radius: 14px;
+  padding: 14px;
+}
+
+/* DEV */
+.card-dev {
+  background: linear-gradient(180deg, #2b1f47, #1b1533);
+  border: 1px solid #6b5cff;
+}
+
+/* CRM */
+.card-crm {
+  background: linear-gradient(180deg, #0f2a3d, #0b1f2d);
+  border: 1px solid #38bdf8;
+}
+
+/* DEMO */
+.card-demo {
+  background: linear-gradient(180deg, #2a1f2d, #1f1621);
+  border: 1px solid #ec4899;
+}
+
+/* BUSINESS / OPS */
+.card-business {
+  background: linear-gradient(180deg, #1f2a24, #16201b);
+  border: 1px solid #10b981;
+}
+
+/* NOTE / default */
+.card-note {
+  background: #0b1220;
+  border: 1px solid #374151;
+}
+
+/* ========== Card internals ========== */
+
+.card .title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.card .body {
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255,255,255,0.85);
+  white-space: pre-wrap;
+}
+
+.card .meta {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+/* ========== Inline images in cards ========== */
+
+.card-image {
+  display: block;
+  max-width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Hover = lift, feels physical */
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
