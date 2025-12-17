@@ -3,3 +3,4 @@ supabase==2.6.0
 faster-whisper
 requests
 python-dotenv==1.0.1
+python-dotenv

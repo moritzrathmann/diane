@@ -5,7 +5,8 @@
 // PATCH /api/items/:id   { reviewed, archived, title?, content?, kind? }
 // POST /api/items/bulk   { ids, action }
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://diane.onrender.com";
+
 
 const state = {
   items: [],
